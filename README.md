@@ -29,14 +29,14 @@ This project turns your ESP32 into a virtual ELM327 interface. It supports a min
    ```bash
    git clone https://github.com/your-username/ESP32_BLE_ELM327.git
    cd ESP32_BLE_ELM327
-```
+
     Open the project in VSCode.
 
     Connect your ESP32.
 
     Build and upload the project:
 
-    ```pio run --target upload```
+    `pio run --target upload`
 
     Or use the PlatformIO buttons in VSCode.
 
@@ -59,6 +59,7 @@ This project turns your ESP32 into a virtual ELM327 interface. It supports a min
     Modify main.cpp to extend or customize command responses as needed.
 
 ## Example Logs
+
 ```
 === BLE RX ===
 HEX   : 41 54 5A 0D
