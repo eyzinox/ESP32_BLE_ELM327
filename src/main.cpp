@@ -104,71 +104,60 @@ public:
         // Gestion des commandes ELM327 minimales
         if (strcmp(cmd, "ATZ") == 0)
         {
-            response = "ELM327 v1.5\r>";
-            respLen = 12;
-            //respLen = strlen(response);
+            response = "ELM327 v1.5\r\n>";
+            respLen = strlen(response);
             delay(500); // petit délai pour reset
         }
         else if (strcmp(cmd, "ATI") == 0)
         {
-            response = "ELM327 v1.5\r>";
-            respLen = 12;
-            //respLen = strlen(response);
+            response = "ELM327 v1.5\r\n>";
+            respLen = strlen(response);
         }
         else if (strcmp(cmd, "ATE0") == 0 || strcmp(cmd, "ATL0") == 0 ||
                  strcmp(cmd, "ATS0") == 0 || strcmp(cmd, "ATH1") == 0 ||
                  strcmp(cmd, "ATSP6") == 0 || strcmp(cmd, "ATCAF0") == 0)
         {
-            response = "OK\r>";
-            respLen = 4;
-            //respLen = strlen(response);
+            response = "OK\r\n>";
+            respLen = strlen(response);
         }
         else if (strcmp(cmd, "ATDPN") == 0)
         {
-            response = "A6\r>";
-            respLen = 4;
-            //respLen = strlen(response);
+            response = "A6\r\n>";
+            respLen = strlen(response);
         }
         else if (strcmp(cmd, "ATDP") == 0)
         {
-            response = "ISO 15765-4 (CAN 11/500)\r>";
-            respLen = 26;
-            //respLen = strlen(response);
+            response = "ISO 15765-4 (CAN 11/500)\r\n>";
+            respLen = strlen(response);
         }
         else if (strcmp(cmd, "ATRV") == 0)
         {
-            response = "13.8V\r>";
-            respLen = 7;
-            //respLen = strlen(response);            
+            response = "13.8V\r\n>";
+            respLen = strlen(response); 
         }
         else if (strcmp(cmd, "0100") == 0)
         {
-            response = "7E8 06 41 00 FF FF FF FF\r>";
-            // respLen = 26;
+            response = "7E8 06 41 00 FF FF FF FF\r\n>";
             respLen = strlen(response);
         }
         else if (strcmp(cmd, "010C") == 0)
         {
-            response = "7E8 04 41 0C 0B B8\r>";
-            // respLen = 20;
+            response = "7E8 04 41 0C 0B B8\r\n>";
             respLen = strlen(response);
         }
         else if (strcmp(cmd, "010D") == 0)
         {
-            response = "7E8 03 41 0D 64\r>";
-            // respLen = 17;
+            response = "7E8 03 41 0D 64\r\n>";
             respLen = strlen(response);
         }
         else
         {
-            response = "?\r>";
-            // respLen = 3;
+            response = "?\r\n>";
             respLen = strlen(response);
         }
 
         if (response)
         {
-            //respLen = strlen(response);
             sendResponse(response, respLen);
             respLen = 0; response = nullptr; // reset
         }
