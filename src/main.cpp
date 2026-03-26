@@ -11,6 +11,8 @@
 
 #define MAX_CMD_LEN 64 // plus grand pour éviter overflow si plusieurs commandes
 
+#define DEBUG 0
+
 BLECharacteristic *pTxCharacteristic = nullptr;
 
 char rxBuffer[MAX_CMD_LEN];
@@ -42,11 +44,12 @@ public:
         if (!pChar)
             return;
 
-        String val = pChar->getValue();
+        String val = pChar->getValue().c_str();
         size_t len = val.length();
         const char *data = val.c_str();
 
         // Debug
+        #ifdef DEBUG
         Serial.println("==== BLE RX ====");
         Serial.print("HEX : ");
         for (size_t i = 0; i < len; i++)
@@ -63,6 +66,7 @@ public:
                 Serial.print('.');
         }
         Serial.println("\n================");
+        #endif
 
         // Ajouter chaque caractère au buffer et traiter toutes les commandes présentes
         for (size_t i = 0; i < len; i++)
@@ -133,7 +137,7 @@ public:
         else if (strcmp(cmd, "ATRV") == 0)
         {
             response = "13.8V\r\n>";
-            respLen = strlen(response); 
+            respLen = strlen(response);
         }
         else if (strcmp(cmd, "0100") == 0)
         {
@@ -159,12 +163,14 @@ public:
         if (response)
         {
             sendResponse(response, respLen);
-            respLen = 0; response = nullptr; // reset
+            respLen = 0;
+            response = nullptr; // reset
         }
     }
 
     void sendResponse(const char *resp, size_t len)
     {
+        #ifdef DEBUG
         Serial.println("==== BLE TX ====");
         Serial.print("HEX : ");
         for (size_t i = 0; i < len; i++)
@@ -181,12 +187,23 @@ public:
                 Serial.print('.');
         }
         Serial.println("\n================");
+        #endif
 
-        // Envoi via BLE
-        if (pTxCharacteristic)
+        if (!pTxCharacteristic)
+            return;
+
+        size_t sent = 0;
+        while (sent < len)
         {
-            pTxCharacteristic->setValue((uint8_t *)resp, len);
+            // On calcule la taille du prochain morceau (max 20 octets)
+            size_t chunkLen = (len - sent > 20) ? 20 : (len - sent);
+
+            // On envoie le morceau
+            pTxCharacteristic->setValue((uint8_t *)(resp + sent), chunkLen);
             pTxCharacteristic->notify();
+
+            sent += chunkLen;
+            delay(2); // Petit délai pour laisser le temps au téléphone de traiter
         }
     }
 };
@@ -198,6 +215,7 @@ void setup()
     Serial.println("ESP32 BLE ELM327 Starting...");
 
     BLEDevice::init(DEVICE_NAME);
+    BLEDevice::setMTU(512);
     BLEServer *server = BLEDevice::createServer();
     server->setCallbacks(new MyServerCallbacks());
 
